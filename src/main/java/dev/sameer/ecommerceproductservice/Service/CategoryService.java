@@ -11,6 +11,9 @@ public interface CategoryService {
     List<CategoryResponseDTO> getAllCategory();
     CategoryResponseDTO getCategoryByID(UUID categoryId);
     CategoryResponseDTO updateCategory(UUID categoryId, CategoryRequestDTO categoryRequestDTO);
-    CategoryResponseDTO deleteCategory(UUID categoryId);
+    Boolean deleteCategory(UUID categoryId);
     double sumOfAllProductsUnderCategory(UUID categoryId);
+    CategoryResponseDTO getProductAscCategory(UUID categoryId);
+
+    CategoryResponseDTO getProductDesCategory(UUID categoryId);
 }

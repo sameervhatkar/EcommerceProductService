@@ -10,9 +10,7 @@ import dev.sameer.ecommerceproductservice.Repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
@@ -56,12 +54,12 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryResponseDTO deleteCategory(UUID categoryId) {
+    public Boolean deleteCategory(UUID categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(
                 () -> new CategoryNotFoundException("Category Not found")
         );
         categoryRepository.delete(category);
-        return EntityToDTOMapper.convertCategoryEntitytoCategoryDTO(category);
+        return true;
     }
 
     public double sumOfAllProductsUnderCategory(UUID categoryId) {
@@ -76,5 +74,37 @@ public class CategoryServiceImpl implements CategoryService{
             }
         }
         return sum;
+    }
+
+    @Override
+    public CategoryResponseDTO getProductAscCategory(UUID categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new CategoryNotFoundException("Category Not Found")
+        );
+        List<Product> productList = category.getProductList();
+        Collections.sort(productList, new Comparator<Product>() {
+            @Override
+            public int compare(Product p1, Product p2) {
+                return Double.compare(p1.getPrice(), p2.getPrice());
+            }
+        });
+        category.setProductList(productList);
+        return EntityToDTOMapper.convertCategoryEntitytoCategoryDTO(category);
+    }
+
+    @Override
+    public CategoryResponseDTO getProductDesCategory(UUID categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new CategoryNotFoundException("Category Not Found")
+        );
+        List<Product> productList = category.getProductList();
+        Collections.sort(productList, new Comparator<Product>() {
+            @Override
+            public int compare(Product p1, Product p2) {
+                return Double.compare(p2.getPrice(), p1.getPrice());
+            }
+        });
+        category.setProductList(productList);
+        return EntityToDTOMapper.convertCategoryEntitytoCategoryDTO(category);
     }
 }

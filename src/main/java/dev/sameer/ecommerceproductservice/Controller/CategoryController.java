@@ -17,7 +17,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/createCategory")
-    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryRequestDTO categoryRequestDTO) {
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestHeader("Authorization") String token, @RequestBody CategoryRequestDTO categoryRequestDTO) {
         return ResponseEntity.ok(categoryService.createCategory(categoryRequestDTO));
     }
 
@@ -32,19 +32,28 @@ public class CategoryController {
     }
 
     @GetMapping("/updateCategory/{categoryId}")
-    public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable UUID categoryId, @RequestBody CategoryRequestDTO categoryRequestDTO) {
+    public ResponseEntity<CategoryResponseDTO> updateCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId, @RequestBody CategoryRequestDTO categoryRequestDTO) {
         return ResponseEntity.ok(categoryService.updateCategory(categoryId, categoryRequestDTO));
     }
 
     @DeleteMapping("/deleteCategory/{categoryId}")
-    public ResponseEntity<CategoryResponseDTO> deleteCategory(@PathVariable UUID categoryId) {
+    public ResponseEntity<Boolean> deleteCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId) {
         return ResponseEntity.ok(categoryService.deleteCategory(categoryId));
     }
 
     @GetMapping("/sumOfAllProductsUnderCategory/{categoryId}")
-    public ResponseEntity<Double> sumOfAllProductsUnderCategory(@PathVariable UUID categoryId) {
+    public ResponseEntity<Double> sumOfAllProductsUnderCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId) {
         return ResponseEntity.ok(categoryService.sumOfAllProductsUnderCategory(categoryId));
     }
 
+    @GetMapping("/getProductInAscUnderCategory/{categoryId}")
+    public ResponseEntity<CategoryResponseDTO> getProductAscCategory(@PathVariable UUID categoryId) {
+        return ResponseEntity.ok(categoryService.getProductAscCategory(categoryId));
+    }
+
+    @GetMapping("/getProductInDesUnderCategory/{categoryId}")
+    public ResponseEntity<CategoryResponseDTO> getProductDesCategory(@PathVariable UUID categoryId) {
+        return ResponseEntity.ok(categoryService.getProductDesCategory(categoryId));
+    }
 
 }
