@@ -18,8 +18,25 @@ public class CategoryController {
 
     @PostMapping("/createCategory")
     public ResponseEntity<CategoryResponseDTO> createCategory(@RequestHeader("Authorization") String token, @RequestBody CategoryRequestDTO categoryRequestDTO) {
-        return ResponseEntity.ok(categoryService.createCategory(categoryRequestDTO));
+        return ResponseEntity.ok(categoryService.createCategory(token, categoryRequestDTO));
     }
+
+    @GetMapping("/updateCategory/{categoryId}")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId, @RequestBody CategoryRequestDTO categoryRequestDTO) {
+        return ResponseEntity.ok(categoryService.updateCategory(token, categoryId, categoryRequestDTO));
+    }
+
+    @DeleteMapping("/deleteCategory/{categoryId}")
+    public ResponseEntity<Boolean> deleteCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId) {
+        return ResponseEntity.ok(categoryService.deleteCategory(token, categoryId));
+    }
+
+    @GetMapping("/sumOfAllProductsUnderCategory/{categoryId}")
+    public ResponseEntity<Double> sumOfAllProductsUnderCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId) {
+        return ResponseEntity.ok(categoryService.sumOfAllProductsUnderCategory(token, categoryId));
+    }
+
+
 
     @GetMapping("/getAllCategory")
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategory() {
@@ -29,21 +46,6 @@ public class CategoryController {
     @GetMapping("/getCategoryById/{categoryId}")
     public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable UUID categoryId) {
         return ResponseEntity.ok(categoryService.getCategoryByID(categoryId));
-    }
-
-    @GetMapping("/updateCategory/{categoryId}")
-    public ResponseEntity<CategoryResponseDTO> updateCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId, @RequestBody CategoryRequestDTO categoryRequestDTO) {
-        return ResponseEntity.ok(categoryService.updateCategory(categoryId, categoryRequestDTO));
-    }
-
-    @DeleteMapping("/deleteCategory/{categoryId}")
-    public ResponseEntity<Boolean> deleteCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId) {
-        return ResponseEntity.ok(categoryService.deleteCategory(categoryId));
-    }
-
-    @GetMapping("/sumOfAllProductsUnderCategory/{categoryId}")
-    public ResponseEntity<Double> sumOfAllProductsUnderCategory(@RequestHeader("Authorization") String token, @PathVariable UUID categoryId) {
-        return ResponseEntity.ok(categoryService.sumOfAllProductsUnderCategory(categoryId));
     }
 
     @GetMapping("/getProductInAscUnderCategory/{categoryId}")

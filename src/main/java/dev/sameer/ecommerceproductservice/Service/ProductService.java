@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductService {
-    ProductResponseDTO addProduct(String token, ProductRequestDTO productRequestDTO);
+    ProductResponseDTO addProduct(String jwtToken, ProductRequestDTO productRequestDTO);
+    ProductResponseDTO updateProduct(String token, UUID productId, ProductRequestDTO productRequestDTO);
+    ProductResponseDTO deleteProduct(String token, UUID productId);
+
     ProductResponseDTO getProduct(UUID id);
     List<ProductResponseDTO> getAllProduct();
-    ProductResponseDTO updateProduct(UUID productId, ProductRequestDTO productRequestDTO);
-    ProductResponseDTO deleteProduct(UUID productId);
     List<ProductResponseDTO> getProductLTH();
     List<ProductResponseDTO> getProductHTL();
 }

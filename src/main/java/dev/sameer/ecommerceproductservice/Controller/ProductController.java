@@ -23,13 +23,27 @@ public class ProductController {
     @Autowired
     private UserService userService;
 
-
+    //Endpoints that need authentication
     //Creating the product
     @PostMapping("/addProduct")
     public ResponseEntity<ProductResponseDTO> addProduct(@RequestHeader("Authorization") String token, @RequestBody ProductRequestDTO productRequestDTO) {
         return ResponseEntity.ok(productService.addProduct(token, productRequestDTO));
     }
 
+    //Update the product
+    @PutMapping("updateProduct/{productId}")
+    public ResponseEntity<ProductResponseDTO> updateProduct(@RequestHeader("Authorization") String token, @PathVariable UUID productId, @RequestBody ProductRequestDTO productRequestDTO) {
+        return ResponseEntity.ok(productService.updateProduct(token, productId, productRequestDTO));
+
+    }
+
+    //Deleting the product
+    @DeleteMapping("deleteProduct/{productId}")
+    public ResponseEntity<ProductResponseDTO> deleteProduct(@RequestHeader("Authorization") String token, @PathVariable UUID productId) {
+        return ResponseEntity.ok(productService.deleteProduct(token, productId));
+    }
+
+    //Endpoints that doesn't need any authentication, user are just seeing the products
     //Reading the product or products
     @GetMapping("product/{productId}")
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable UUID productId) {
@@ -50,20 +64,6 @@ public class ProductController {
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProduct());
     }
-
-    //Update the product
-    @PutMapping("updateProduct/{productId}")
-    public ResponseEntity<ProductResponseDTO> updateProduct(@RequestHeader("Authorization") String token, @PathVariable UUID productId, @RequestBody ProductRequestDTO productRequestDTO) {
-        return ResponseEntity.ok(productService.updateProduct(productId, productRequestDTO));
-
-    }
-
-    //Deleting the product
-    @DeleteMapping("deleteProduct/{productId}")
-    public ResponseEntity<ProductResponseDTO> deleteProduct(@RequestHeader("Authorization") String token, @PathVariable UUID productId) {
-        return ResponseEntity.ok(productService.deleteProduct(productId));
-    }
-
 
     @GetMapping("getProductLowToHigh")
     public ResponseEntity<List<ProductResponseDTO>> getProductsLTH() {

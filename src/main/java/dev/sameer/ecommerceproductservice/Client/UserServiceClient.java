@@ -25,26 +25,23 @@ public class UserServiceClient {
     @Value("${EcommerceUserService.base.url}")
     private String userServiceClientApiBaseUrl;
 
-    public boolean validate(String token) {
-        String userServiceClientBaseUrl = userServiceClientApiBaseUrl.concat("/validate");
+    public boolean validate(String jwtToken) {
+        String userServiceClientBaseUrl = userServiceClientApiBaseUrl.concat("/authenticate");
+
         RestTemplate restTemplate = restTemplateBuilder.build();
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-        ResponseEntity<Boolean> responseEntity = restTemplate.exchange(userServiceClientBaseUrl, HttpMethod.GET, entity,Boolean.class);
-        return responseEntity.getBody();
-    }
+        headers.setBearerAuth(jwtToken); // Set the JWT token in the Authorization header
 
-
-    public UserResponseDTO login(LoginRequestDTO loginRequestDTO) {
-        String userServiceClientBaseUrl = userServiceClientApiBaseUrl.concat("/login");
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        ResponseEntity<UserResponseDTO> responseEntity = restTemplate.postForEntity(
-                userServiceClientBaseUrl, loginRequestDTO, UserResponseDTO.class
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
+                userServiceClientBaseUrl,
+                HttpMethod.GET,
+                requestEntity,
+                Boolean.class
         );
+
         return responseEntity.getBody();
     }
-
 }
 
 /*

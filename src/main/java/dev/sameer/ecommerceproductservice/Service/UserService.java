@@ -12,12 +12,7 @@ public class UserService {
     @Autowired
     private UserServiceClient userServiceClient;
 
-    public UserResponseDTO login(LoginRequestDTO loginRequestDTO) {
-        UserResponseDTO userResponseDTO = userServiceClient.login(loginRequestDTO);
-        return userResponseDTO;
-    }
-
-    public boolean validate(String token) {
-        return userServiceClient.validate(token);
+    public boolean validate(String jwtToken) {
+        return userServiceClient.validate(jwtToken);
     }
 }

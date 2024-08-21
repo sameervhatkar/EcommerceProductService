@@ -1,10 +1,12 @@
 package dev.sameer.ecommerceproductservice.Service;
 
+import dev.sameer.ecommerceproductservice.Client.UserServiceClient;
 import dev.sameer.ecommerceproductservice.DTO.CategoryRequestDTO;
 import dev.sameer.ecommerceproductservice.DTO.CategoryResponseDTO;
 import dev.sameer.ecommerceproductservice.Entity.Category;
 import dev.sameer.ecommerceproductservice.Entity.Product;
 import dev.sameer.ecommerceproductservice.Exceptions.CategoryNotFoundException;
+import dev.sameer.ecommerceproductservice.Exceptions.InvalidTokenException;
 import dev.sameer.ecommerceproductservice.Mapper.EntityToDTOMapper;
 import dev.sameer.ecommerceproductservice.Repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +19,63 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private UserServiceClient userServiceClient;
 
     @Override
-    public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) {
-        Category category = new Category();
-        category.setCategoryName(categoryRequestDTO.getCategoryName());
-        categoryRepository.save(category);
-        return EntityToDTOMapper.convertCategoryEntitytoCategoryDTO(category);
+    public CategoryResponseDTO createCategory(String token, CategoryRequestDTO categoryRequestDTO) {
+        if(userServiceClient.validate(token)) {
+            Category category = new Category();
+            category.setCategoryName(categoryRequestDTO.getCategoryName());
+            categoryRepository.save(category);
+            return EntityToDTOMapper.convertCategoryEntitytoCategoryDTO(category);
+        }
+        else
+            throw new InvalidTokenException("Invalid token, Token might be expired");
+    }
+
+    @Override
+    public CategoryResponseDTO updateCategory(String token, UUID categoryId, CategoryRequestDTO categoryRequestDTO) {
+        if(userServiceClient.validate(token)) {
+            Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException("Category Not Found"));
+            category.setCategoryName(categoryRequestDTO.getCategoryName());
+            categoryRepository.save(category);
+            return EntityToDTOMapper.convertCategoryEntitytoCategoryDTO(category);
+        }
+        else
+            throw new InvalidTokenException("Invalid token, Token might be expired");
+
+    }
+
+    @Override
+    public Boolean deleteCategory(String token, UUID categoryId) {
+        if(userServiceClient.validate(token)) {
+            Category category = categoryRepository.findById(categoryId).orElseThrow(
+                    () -> new CategoryNotFoundException("Category Not found")
+            );
+            categoryRepository.delete(category);
+            return true;
+        }
+        else
+            throw new InvalidTokenException("Invalid token, Token might be expired");
+    }
+
+    public double sumOfAllProductsUnderCategory(String token, UUID categoryId) {
+        if(userServiceClient.validate(token)) {
+            Category category = categoryRepository.findById(categoryId).orElseThrow(
+                    () -> new CategoryNotFoundException("Category Not Found")
+            );
+            List<Product> productList = category.getProductList();
+            double sum = 0;
+            if (!productList.isEmpty()) {
+                for (Product product : productList) {
+                    sum += product.getPrice();
+                }
+            }
+            return sum;
+        }
+        else
+            throw new InvalidTokenException("Invalid token, Token might be expired");
     }
 
     @Override
@@ -44,37 +96,6 @@ public class CategoryServiceImpl implements CategoryService{
 
     }
 
-    @Override
-    public CategoryResponseDTO updateCategory(UUID categoryId, CategoryRequestDTO categoryRequestDTO) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException("Category Not Found"));
-        category.setCategoryName(categoryRequestDTO.getCategoryName());
-        categoryRepository.save(category);
-        return EntityToDTOMapper.convertCategoryEntitytoCategoryDTO(category);
-
-    }
-
-    @Override
-    public Boolean deleteCategory(UUID categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(
-                () -> new CategoryNotFoundException("Category Not found")
-        );
-        categoryRepository.delete(category);
-        return true;
-    }
-
-    public double sumOfAllProductsUnderCategory(UUID categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(
-                () -> new CategoryNotFoundException("Category Not Found")
-        );
-        List<Product> productList = category.getProductList();
-        double sum = 0;
-        if(!productList.isEmpty()) {
-            for(Product product : productList) {
-                sum += product.getPrice();
-            }
-        }
-        return sum;
-    }
 
     @Override
     public CategoryResponseDTO getProductAscCategory(UUID categoryId) {
