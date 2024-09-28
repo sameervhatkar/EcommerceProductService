@@ -3,10 +3,11 @@
 # Overview
 
 This microservice is responsible for managing products and categories in an e-commerce platform. It provides endpoints for creating, reading, updating, and deleting products and categories. Additionally, it includes functionalities for sorting products based on price and communicating with the User microservice to validate user sessions.
-Other MicroServices:
-User Service: https://github.com/sameervhatkar/EcommerceUserService
-Order Service: https://github.com/sameervhatkar/EcommerceOrderService
-Payment Service: https://github.com/sameervhatkar/EcomPaymentService
+
+## Other MicroServices:
+* User Service: https://github.com/sameervhatkar/EcommerceUserService
+* Order Service: https://github.com/sameervhatkar/EcommerceOrderService
+* Payment Service: https://github.com/sameervhatkar/EcomPaymentService
 
 ## Technologies Used
 * Java
